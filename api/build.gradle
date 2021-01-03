@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id "org.openapi.generator" version "4.3.1"
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+}
+group 'ru.vvzl'
+version '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+}
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Finchley.SR1"
+    }
+}
+
+dependencies {
+    implementation group: 'io.swagger', name: 'swagger-annotations', version: '1.5.18'
+    implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.0.16.Final'
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-oauth2'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.12.0'
+    implementation group: 'org.openapitools', name: 'jackson-databind-nullable', version: '0.1.0'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+//    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+sourceSets{
+    main {
+        java{
+            srcDirs += ["$buildDir/generated/src/main/java"]
+        }
+    }
+}
+openApiGenerate {
+    generatorName = "spring"
+    inputSpec = "$rootDir/api/src/spec/api.yaml".toString()
+    outputDir = "$buildDir/generated".toString()
+    apiPackage = "ru.vvzl.fs.rs.api"
+    invokerPackage = "ru.vvzl.fs.rs"
+    modelPackage = "ru.vvzl.fs.rs.model"
+    configOptions = [
+            dateLibrary: "java8",
+            library: "spring-cloud",
+            interfaceOnly: "true",
+    ]
+}
+compileJava.dependsOn tasks.openApiGenerate

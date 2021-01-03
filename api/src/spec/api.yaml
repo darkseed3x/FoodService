@@ -1,0 +1,89 @@
+openapi: 3.0.1
+info:
+  title: Restoraunt
+  description: Api is providing the restoraunt service
+  version: 0.1.9
+  x-product-version: v1
+  x-backend:
+    name: RestorauntApi
+    min-nodes: 1
+servers:
+  - url: /rst
+paths:
+  /getMenu:
+    get:
+      tags:
+        - Restaurant
+      operationId: getMenu
+      summary: Returns a list of menu of restoraunt.
+      description:
+      responses:
+        200:    # status code
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Asset'
+        400:
+          description: badRequest
+        500:
+          description: serverError
+  /getAsset:
+    get:
+      tags:
+        - Restaurant
+      operationId: getAsset
+      summary: Search by Id
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+        400:
+          description: badRequest
+        500:
+          description: serverError
+  /addAsset:
+    post:
+      tags:
+        - Restaurant
+      operationId: addAsset
+      summary: add Asset in base
+      requestBody:
+        description: Request for add Asset
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Asset'
+      responses:
+        200:
+          description: success
+        400:
+          description: badRequest
+        500:
+          description: serverError
+components:
+  schemas:
+    Asset:
+      type: object
+      description: Position on menu
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        discirption:
+          type: string
+      required:
+        - id
+        - name
+        - discirption
