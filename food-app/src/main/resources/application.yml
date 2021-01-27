@@ -1,0 +1,29 @@
+server:
+  port: 8770
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${foodService.db.url}
+    username: ${foodService.db.username}
+    password: ${foodService.db.password}
+  flyway:
+    enabled: true
+    url: ${foodService.db.url}
+    username: ${foodService.db.username}
+    password: ${foodService.db.password}
+    schemas: ${foodService.db.schema}
+
+management:
+  endpoints:
+    enabled-by-default: false
+  endpoint:
+    health:
+      enabled: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
