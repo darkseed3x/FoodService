@@ -1,5 +1,5 @@
 server:
-  port: 8738
+  port: 8739
 
 spring:
   datasource:

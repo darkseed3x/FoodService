@@ -1,8 +1,8 @@
-
-
 group = 'ru.vvzl'
 version = '0.0.1-SNAPSHOT'
-
-
-
-
+ext {
+    set('springCloudVersion', "2020.0.0-RC1")
+    set('springBootVersion', "2.4.1")
+    set('springDataVersion', "2.4.1")
+    set('springWebVersion', "2.4.1")
+}

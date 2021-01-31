@@ -30,6 +30,46 @@ paths:
           description: badRequest
         500:
           description: serverError
+  /allMenu:
+    get:
+      tags:
+        - FoodOrderService
+      operationId: allMenu
+      summary: Returns a list of menu of all restoraunts.=
+      responses:
+        200:    # status code
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AssetResponse'
+        400:
+          description: badRequest
+        500:
+          description: serverError
+  /listRestaurants:
+    get:
+      tags:
+        - FoodOrderService
+      operationId: RestoList
+      summary: Returns the list of restoraunt.
+      responses:
+        200:    # status code
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Restaurant'
+        400:
+          description: badRequest
+        500:
+          description: serverError
   /order:
     post:
       tags:
@@ -209,6 +249,13 @@ paths:
           description: serverError
 components:
   schemas:
+    Restaurant:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
     AddAssetResponse:
       type: object
       properties:

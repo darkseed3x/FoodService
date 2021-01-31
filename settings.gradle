@@ -1,6 +1,6 @@
 rootProject.name = 'restaurant'
 include 'api'
-include 'app'
-include 'food-app'
 include 'kfc'
+include 'foodService'
+include 'Charlie'
 
