@@ -1,19 +1,23 @@
 package ru.vvzl.fs.rs.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 import ru.vvzl.fs.rs.dao.RsDAO;
 import ru.vvzl.fs.rs.model.*;
 import ru.vvzl.fs.rs.service.RService;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RServiceImpl implements RService {
+
+    @Autowired
     private RsDAO rsDAO;
 
-    public RServiceImpl(RsDAO rsDAO) {
-        this.rsDAO = rsDAO;
-    }
 
     @Override
     public AssetResponse getAsset(Integer id) {
@@ -28,7 +32,11 @@ public class RServiceImpl implements RService {
 
     @Override
     public AddAssetResponse addAsset(Asset asset) {
-        return rsDAO.addAsset(asset);
+        KeyHolder keyHolder = rsDAO.createAsset(asset);
+        AddAssetResponse addAssetResponse = new AddAssetResponse();
+        addAssetResponse.setId((Integer) keyHolder.getKey());
+
+        return addAssetResponse;
     }
 
     @Override
@@ -38,11 +46,38 @@ public class RServiceImpl implements RService {
 
     @Override
     public AddOrderResponse addOrder(List<Order> order ) {
-        return rsDAO.addOrder(order);
+        KeyHolder keyHolder = rsDAO.createOrder();
+
+        rsDAO.createOrderItems(order, keyHolder);
+        AddOrderResponse addOrderResponse = new AddOrderResponse();
+        addOrderResponse.setOrderid(String.valueOf( keyHolder.getKey()));
+        return addOrderResponse;
     }
 
     @Override
     public OrderResponse getOrder(Integer id) {
-        return rsDAO.getOrder(id);
+        final BigDecimal[] price = {new BigDecimal("0")};
+        OrderDTO orderDTO = rsDAO.getOrderFromBase(id);
+
+        OrderResponse orderResponse = new OrderResponse();
+        orderResponse.setId(orderDTO.getOrderId());
+        orderResponse.setCreated(orderDTO.getCreated());
+
+        List<Order> listOrder = rsDAO.getOrderItems(id);
+
+        List<OrderResponseOrder> list = listOrder.stream().map(order -> {
+            OrderResponseOrder orderResponseOrder = new OrderResponseOrder();
+            orderResponseOrder.setCount(order.getCount());
+            AssetResponse asset = getAsset(order.getAssestId());
+            price[0] = price[0].add(asset.getPrice().multiply(new BigDecimal(order.getCount())));
+            orderResponseOrder.setAsset(asset);
+            return orderResponseOrder;
+        }).collect(Collectors.toList());
+
+
+        orderResponse.setPrice(price[0].setScale(2, RoundingMode.FLOOR));
+        orderResponse.setOrder(list);
+
+        return orderResponse;
     }
 }

@@ -11,17 +11,17 @@ import ru.vvzl.fs.rs.dao.AssetResponseMapper;
 import ru.vvzl.fs.rs.dao.OrderDTOMapper;
 import ru.vvzl.fs.rs.dao.OrderMapper;
 import ru.vvzl.fs.rs.dao.RsDAO;
-import ru.vvzl.fs.rs.model.*;
+import ru.vvzl.fs.rs.model.Asset;
+import ru.vvzl.fs.rs.model.AssetResponse;
+import ru.vvzl.fs.rs.model.Order;
+import ru.vvzl.fs.rs.model.OrderDTO;
 
 import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class RsDaoImpl implements RsDAO {
@@ -67,7 +67,7 @@ public class RsDaoImpl implements RsDAO {
     }
 
     @Override
-    public AddAssetResponse addAsset(Asset asset) {
+    public KeyHolder createAsset(Asset asset) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(addAssetStatement, new String[]{"asset_id"});
@@ -76,10 +76,7 @@ public class RsDaoImpl implements RsDAO {
             ps.setBigDecimal(3, asset.getPrice());
             return ps;
         }, keyHolder);
-        AddAssetResponse addAssetResponse = new AddAssetResponse();
-        addAssetResponse.setId((Integer) keyHolder.getKey());
-
-        return addAssetResponse;
+        return keyHolder;
     }
 
     @Override
@@ -88,15 +85,9 @@ public class RsDaoImpl implements RsDAO {
 
     }
 
-    @Override
-    public AddOrderResponse addOrder(List<Order> order) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(addOrderInsert, new String[]{"order_id"});
-            ps.setTimestamp(1, Timestamp.from(OffsetDateTime.now().toInstant()));
-            return ps;
-        }, keyHolder);
 
+    @Override
+    public void createOrderItems(List<Order> order, KeyHolder keyHolder) {
         jdbcTemplate.batchUpdate(addOrderBatch,
                 new BatchPreparedStatementSetter() {
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -109,38 +100,28 @@ public class RsDaoImpl implements RsDAO {
                         return order.size();
                     }
                 });
-        AddOrderResponse addOrderResponse = new AddOrderResponse();
-        addOrderResponse.setOrderid(String.valueOf( keyHolder.getKey()));
-        return addOrderResponse;
-
+    }
+    @Override
+    public KeyHolder createOrder() {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(addOrderInsert, new String[]{"order_id"});
+            ps.setTimestamp(1, Timestamp.from(OffsetDateTime.now().toInstant()));
+            return ps;
+        }, keyHolder);
+        return keyHolder;
     }
 
+
     @Override
-    public OrderResponse getOrder(Integer id) {
-        final BigDecimal[] price = {new BigDecimal("0")};
-        OrderDTO orderDTO = jdbcTemplate.queryForObject(getOrderObj, new OrderDTOMapper(), id);
-
-        OrderResponse orderResponse = new OrderResponse();
-        orderResponse.setId(orderDTO.getOrderId());
-        orderResponse.setCreated(orderDTO.getCreated());
-
+    public List<Order> getOrderItems(Integer id) {
         List<Order> listOrder = jdbcTemplate.query(getOrderQuery, new OrderMapper(), id);
-
-        List<OrderResponseOrder> list = listOrder.stream().map(order -> {
-            OrderResponseOrder orderResponseOrder = new OrderResponseOrder();
-            orderResponseOrder.setCount(order.getCount());
-            AssetResponse asset = getAsset(order.getAssestId());
-            price[0] = price[0].add(asset.getPrice().multiply(new BigDecimal(order.getCount())));
-            orderResponseOrder.setAsset(asset);
-            return orderResponseOrder;
-        }).collect(Collectors.toList());
-
-
-        orderResponse.setPrice(price[0].setScale(2, RoundingMode.FLOOR));
-        orderResponse.setOrder(list);
-
-
-        return orderResponse;
+        return listOrder;
+    }
+    @Override
+    public OrderDTO getOrderFromBase(Integer id) {
+        OrderDTO orderDTO = jdbcTemplate.queryForObject(getOrderObj, new OrderDTOMapper(), id);
+        return orderDTO;
     }
 
 
