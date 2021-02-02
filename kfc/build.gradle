@@ -20,6 +20,7 @@ dependencies {
     implementation project(":api")
     implementation "org.springframework.boot:spring-boot-starter-web:${springWebVersion}"
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.retry:spring-retry'
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.springframework.cloud:spring-cloud-starter'
     implementation 'org.springframework.cloud:spring-cloud-starter-consul-discovery'
