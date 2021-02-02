@@ -4,13 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import ru.vvzl.fs.rs.api.RestaurantApi;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class ScopeRefreshedListener {
-    private final List<String> list = new ArrayList<>();
+    private final Map<String,RestaurantApi> list = new HashMap<>();
 
     @Autowired
     private Config config;
@@ -18,7 +19,7 @@ public class ScopeRefreshedListener {
     @Autowired
     private FeignClients feignClients;
 
-    public List<String> getList() {
+    public Map<String,RestaurantApi> getMap() {
         return list;
     }
 
@@ -30,11 +31,7 @@ public class ScopeRefreshedListener {
     public void refresh() {
         list.clear();
         for (String s : config.getNames()) {
-            try {
-                feignClients.getClient(s).getMenu();
-                list.add(s);
-            } catch (Exception e) {
-            }
+            list.put(s, feignClients.getClient(s));
         }
     }
 }

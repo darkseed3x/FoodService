@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Repository;
 import ru.vvzl.fs.fs.DAO.FoodServiceDAO;
 
@@ -31,11 +33,17 @@ public class FoodServiceDAOimpl implements FoodServiceDAO {
     }
 
     @Override
+    @Retryable(value = RuntimeException.class,
+            maxAttemptsExpression = "${retry.maxAttempts}",
+            backoff = @Backoff(delayExpression = "${retry.maxDelay}"))
     public void addOrder(String orderId) {
         jdbcTemplate.update(insertOrder, orderId);
     }
 
     @Override
+    @Retryable(value = RuntimeException.class,
+            maxAttemptsExpression = "${retry.maxAttempts}",
+            backoff = @Backoff(delayExpression = "${retry.maxDelay}"))
     public String orderInBase(String orderId) {
         try {
             return jdbcTemplate.queryForObject(selectOrder, String.class,orderId);

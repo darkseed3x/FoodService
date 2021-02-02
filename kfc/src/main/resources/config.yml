@@ -1,0 +1,6 @@
+restaurant:
+  db:
+    username: postgres
+    password: 1z2x3c4v
+    url: jdbc:postgresql://localhost:8098/kfc
+    schema: public

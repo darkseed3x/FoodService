@@ -16,6 +16,11 @@ spring:
     password: ${foodService.db.password}
     schemas: ${foodService.db.schema}
     placeholders.foodServiceName: ${spring.application.name}
+#  rabbitmq:
+#    host: ${foodService.rabbit.host}
+#    port: ${foodService.rabbit.port}
+#    username: ${foodService.rabbit.username}
+#    password: ${foodService.rabbit.password}
 
 management:
   endpoints:
@@ -30,3 +35,6 @@ feign:
       default:
         connectTimeout: 5000
         readTimeout: 5000
+retry:
+  maxAttempts: 2
+  maxDelay: 1000

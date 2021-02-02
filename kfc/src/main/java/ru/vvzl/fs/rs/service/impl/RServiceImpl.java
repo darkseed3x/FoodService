@@ -1,14 +1,18 @@
 package ru.vvzl.fs.rs.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import ru.vvzl.fs.rs.dao.RsDAO;
 import ru.vvzl.fs.rs.model.*;
 import ru.vvzl.fs.rs.service.RService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,9 +45,14 @@ public class RServiceImpl implements RService {
 
     @Override
     public void deleteAsset(Integer id) {
-        rsDAO.deleteAsset(id);
+        try {
+            rsDAO.deleteAsset(id);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"");
+        }
     }
 
+    @Transactional
     @Override
     public AddOrderResponse addOrder(List<Order> order ) {
         KeyHolder keyHolder = rsDAO.createOrder();

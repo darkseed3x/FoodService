@@ -1,0 +1,22 @@
+foodService:
+  db:
+    username: postgres
+    password: 1z2x3c4v
+    url: jdbc:postgresql://localhost:8098/foodService
+    schema: public
+  rabbit:
+    host: localhost
+    port: 5672
+    username: admin
+    password: 1q2w3e4r
+    queueIn: SUS.IN
+    queueOut: SUS.OUT
+    exchangeIn: SUS.IN_exchange
+    exchangeOut: SUS.OUT_exchange
+    routingKeyIn: toSusIn
+    routingKeyOut: toSusOut
+restaurants:
+  names:
+    - Charlie
+    - kfc
+    - Holostyak
