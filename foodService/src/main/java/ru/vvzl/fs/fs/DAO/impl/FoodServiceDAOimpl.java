@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import ru.vvzl.fs.fs.DAO.FoodServiceDAO;
 
 import javax.annotation.PostConstruct;
+import java.sql.SQLException;
 
 @Repository
 public class FoodServiceDAOimpl implements FoodServiceDAO {
@@ -33,7 +34,7 @@ public class FoodServiceDAOimpl implements FoodServiceDAO {
     }
 
     @Override
-    @Retryable(value = RuntimeException.class,
+    @Retryable(value = SQLException.class,
             maxAttemptsExpression = "${retry.maxAttempts}",
             backoff = @Backoff(delayExpression = "${retry.maxDelay}"))
     public void addOrder(String orderId) {
@@ -41,7 +42,7 @@ public class FoodServiceDAOimpl implements FoodServiceDAO {
     }
 
     @Override
-    @Retryable(value = RuntimeException.class,
+    @Retryable(value = SQLException.class,
             maxAttemptsExpression = "${retry.maxAttempts}",
             backoff = @Backoff(delayExpression = "${retry.maxDelay}"))
     public String orderInBase(String orderId) {
