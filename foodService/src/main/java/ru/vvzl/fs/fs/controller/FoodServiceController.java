@@ -1,5 +1,6 @@
 package ru.vvzl.fs.fs.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vvzl.fs.fs.service.FoodOrderService;
@@ -11,11 +12,9 @@ import java.util.List;
 
 @RestController
 public class FoodServiceController implements FoodOrderServiceApi{
-    private final FoodOrderService service;
+    @Autowired
+    private  FoodOrderService service;
 
-    public FoodServiceController(FoodOrderService service) {
-        this.service = service;
-    }
 
     @Override
     public ResponseEntity<List<List<AssetResponse>>> allMenu() {
@@ -24,6 +23,7 @@ public class FoodServiceController implements FoodOrderServiceApi{
 
     @Override
     public ResponseEntity<OrderResponse> getCommonOrder( @Valid String orderId) {
+
         return ResponseEntity.ok(service.getOrder(orderId));
     }
 

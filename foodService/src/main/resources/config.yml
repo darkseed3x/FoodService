@@ -9,12 +9,23 @@ foodService:
     port: 5672
     username: admin
     password: 1q2w3e4r
-    queueIn: SUS.IN
-    queueOut: SUS.OUT
-    exchangeIn: SUS.IN_exchange
-    exchangeOut: SUS.OUT_exchange
-    routingKeyIn: toSusIn
-    routingKeyOut: toSusOut
+service:
+  rabbit:
+    queueGetOrderIn: foodSGetOrder.IN
+    queueNewOrderIn: foodSNewOrder.IN
+    queueGetMenuIn: foodSGetMenu.IN
+    queueGetAllMenuIn: foodSGetAllMenu.IN
+    queueGetRestIn: foodSGetRest.IN
+    routingKeyGetOrderIn: toFoodServiceGetOrderIn
+    routingKeyNewOrderIn: toFoodServiceNewOrderIn
+    routingKeyGetMenuIn: toFoodServiceGetMenuIn
+    routingKeyGetAllMenuIn: toFoodServiceGetAllMenuIn
+    routingKeyGetRestIn: toFoodServiceGetRestIn
+    routingKeyErr: foodServiceErr
+    queueErr: foodService.ERR
+    queueOut: foodService.OUT
+    routingKeyOut: toFoodServiceOut
+    exchange: foodS.ex
 restaurants:
   names:
     - Charlie
