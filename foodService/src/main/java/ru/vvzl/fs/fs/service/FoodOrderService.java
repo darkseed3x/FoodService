@@ -15,7 +15,6 @@ import ru.vvzl.fs.rs.api.RestaurantApi;
 import ru.vvzl.fs.rs.model.*;
 
 import javax.annotation.PostConstruct;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

@@ -1,5 +1,7 @@
 package ru.vvzl.fs.fs.messaging;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
@@ -14,82 +16,63 @@ import ru.vvzl.fs.fs.service.FoodOrderService;
 
 @Component
 public class MessageListener {
+    Logger logger = LoggerFactory.getLogger(MessageListener.class);
     @Autowired
     private FoodOrderService service;
     @Autowired
     private MessageSender messageSender;
 
-
-    @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(value = "${service.rabbit.queueGetOrderIn:testIn}", durable = "true"),
-            exchange = @Exchange(value = "${service.rabbit.exchange:testExcIn}", ignoreDeclarationExceptions = "true"),
-            key = "${service.rabbit.routingKeyGetOrderIn:testRkGoIn}")
-    )
+    @RabbitListener(queues = "${service.rabbit.queueGetOrderIn:testIn}")
     public void getOrder(OrderReqRabbit req) {
 
         try {
             messageSender.sendMessageOrderResponse(service.getOrder(req.getOrderId()));
         }catch (Exception e){
             messageSender.sendErrorMessage(e.getMessage());
+            logger.error(e.getMessage());
         }
 
     }
 
-
-    @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(value = "${service.rabbit.queueNewOrderIn:testIn}", durable = "true"),
-            exchange = @Exchange(value = "${service.rabbit.exchange:testExcIn}", ignoreDeclarationExceptions = "true"),
-            key = "${service.rabbit.routingKeyNewOrderIn:testRkGoIn}")
-    )
+    @RabbitListener(queues = "${service.rabbit.queueNewOrderIn:testIn}")
     public void newOrder(NewOrderReqRabbit req) {
 
         try {
             messageSender.sendMessageNewOrderResponse(service.newOrder(req.getRestaurant(), req.getOrders()));
         }catch (Exception e){
             messageSender.sendErrorMessage(e.getMessage());
+            logger.error(e.getMessage());
         }
 
     }
-    @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(value = "${service.rabbit.queueGetMenuIn:testIn}", durable = "true"),
-            exchange = @Exchange(value = "${service.rabbit.exchange:testExcIn}", ignoreDeclarationExceptions = "true"),
-            key = "${service.rabbit.routingKeyGetMenuIn:testRkGoIn}")
-    )
+    @RabbitListener(queues = "${service.rabbit.queueGetMenuIn:testIn}")
     public void getMenu(MenuReqRabbit req) {
 
         try {
-
-        messageSender.sendMessageGetMenuResponse(service.getMenu(req.getRestaurant()));
+            messageSender.sendMessageGetMenuResponse(service.getMenu(req.getRestaurant()));
         }catch (Exception e){
-        messageSender.sendErrorMessage(e.getMessage());
+            messageSender.sendErrorMessage(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
-    @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(value = "${service.rabbit.queueGetRestIn:testIn}", durable = "true"),
-            exchange = @Exchange(value = "${service.rabbit.exchange:testExcIn}", ignoreDeclarationExceptions = "true"),
-            key = "${service.rabbit.routingKeyGetRestIn:testRkGoIn}")
-    )
+    @RabbitListener(queues = "${service.rabbit.queueGetRestIn:testIn}")
     public void getRestaurants(BlankReqRabbit req) {
 
         try {
-
-        messageSender.sendMessageGetRestaurantsResponse(service.getRestaurants());
+            messageSender.sendMessageGetRestaurantsResponse(service.getRestaurants());
         }catch (Exception e){
-        messageSender.sendErrorMessage(e.getMessage());
+            messageSender.sendErrorMessage(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
-    @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(value = "${service.rabbit.queueGetAllMenuIn:testIn}", durable = "true"),
-            exchange = @Exchange(value = "${service.rabbit.exchange:testExcIn}", ignoreDeclarationExceptions = "true"),
-            key = "${service.rabbit.routingKeyGetAllMenuIn:testRkGoIn}")
-    )
+    @RabbitListener(queues = "${service.rabbit.queueGetAllMenuIn:testIn}")
     public void getAllMenu(BlankReqRabbit req) {
 
         try {
-
-        messageSender.sendMessageGetAllMenuResponse(service.getAllMenu());
+            messageSender.sendMessageGetAllMenuResponse(service.getAllMenu());
         }catch (Exception e){
-        messageSender.sendErrorMessage(e.getMessage());
+            messageSender.sendErrorMessage(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 }

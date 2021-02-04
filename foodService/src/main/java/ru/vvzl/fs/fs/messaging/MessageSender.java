@@ -23,20 +23,20 @@ public class MessageSender {
 
     public void sendMessageOrderResponse(OrderResponse response) {
 
-            this.rabbitTemplate.convertAndSend(rabbitConfig.getExchange(), rabbitConfig.getRoutingKeyOut(), response);
+            this.rabbitTemplate.convertAndSend(rabbitConfig.getExchange(), rabbitConfig.getRoutingKeyGetOrderOut(), response);
 
 
     }
     public void sendMessageNewOrderResponse(AddOrderResponse response) {
 
-        this.rabbitTemplate.convertAndSend(rabbitConfig.getExchange(), rabbitConfig.getRoutingKeyOut(), response);
+        this.rabbitTemplate.convertAndSend(rabbitConfig.getExchange(), rabbitConfig.getRoutingKeyNewOrderOut(), response);
 
 
     }
 
     public void sendMessageGetRestaurantsResponse(List<Restaurant> response) {
 
-        this.rabbitTemplate.convertAndSend(rabbitConfig.getExchange(), rabbitConfig.getRoutingKeyOut(), response);
+        this.rabbitTemplate.convertAndSend(rabbitConfig.getExchange(), rabbitConfig.getRoutingKeyGetRestOut(), response);
 
 
     }
@@ -44,13 +44,13 @@ public class MessageSender {
 
     public void sendMessageGetMenuResponse(List<AssetResponse> response) {
 
-        this.rabbitTemplate.convertAndSend(rabbitConfig.getExchange(), rabbitConfig.getRoutingKeyOut(), response);
+        this.rabbitTemplate.convertAndSend(rabbitConfig.getExchange(), rabbitConfig.getRoutingKeyGetMenuOut(), response);
 
 
     }
     public void sendMessageGetAllMenuResponse(List<List<AssetResponse>> response) {
 
-        this.rabbitTemplate.convertAndSend(rabbitConfig.getExchange(), rabbitConfig.getRoutingKeyOut(), response);
+        this.rabbitTemplate.convertAndSend(rabbitConfig.getExchange(), rabbitConfig.getRoutingKeyGetAllMenuOut(), response);
 
 
     }

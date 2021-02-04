@@ -21,6 +21,16 @@ service:
     routingKeyGetMenuIn: toFoodServiceGetMenuIn
     routingKeyGetAllMenuIn: toFoodServiceGetAllMenuIn
     routingKeyGetRestIn: toFoodServiceGetRestIn
+    queueGetOrderOut: foodSGetOrder.OUT
+    queueNewOrderOut: foodSNewOrder.OUT
+    queueGetMenuOut: foodSGetMenu.OUT
+    queueGetAllMenuOut: foodSGetAllMenu.OUT
+    queueGetRestOut: foodSGetRest.OUT
+    routingKeyGetOrderOut: toFoodServiceGetOrderOut
+    routingKeyNewOrderOut: toFoodServiceNewOrderOut
+    routingKeyGetMenuOut: toFoodServiceGetMenuOut
+    routingKeyGetAllMenuOut: toFoodServiceGetAllMenuOut
+    routingKeyGetRestOut: toFoodServiceGetRestOut
     routingKeyErr: foodServiceErr
     queueErr: foodService.ERR
     queueOut: foodService.OUT
